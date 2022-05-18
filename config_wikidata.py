@@ -1,3 +1,4 @@
+import os
 
 """
 This file defines a few constants which configure
@@ -5,17 +6,19 @@ which Wikibase instance and which property/item ids
 should be used
 """
 
+mediawiki_base_uri = 'https://' + os.environ.get('WIKI_PREFIX') + '.' + os.environ.get('WIKI_SUFFIX')
+
 # Endpoint of the MediaWiki API of the Wikibase instance
-mediawiki_api_endpoint = 'https://www.wikidata.org/w/api.php'
+mediawiki_api_endpoint = mediawiki_base_uri + '/api.php';
 
 # SPARQL endpoint
 wikibase_sparql_endpoint = 'https://query.wikidata.org/sparql'
 
 # Name of the Wikibase instance
-wikibase_name = 'Wikidata'
+wikibase_name = os.environ.get('WIKI_PREFIX')
 
 # URL of the main page of the Wikibase instance
-wikibase_main_page = 'https://www.wikidata.org/wiki/Wikidata:Main_Page'
+wikibase_main_page = mediawiki_base_uri + '/Hoofdpagina'
 
 # Wikibase namespace ID, used to search for items
 # For Wikidata this is 0, but most by default Wikibase uses 120, which is the default Wikibase 'Item:' namespace
@@ -30,21 +33,21 @@ user_agent = 'OpenRefine-Wikidata reconciliation interface'
 
 # Regexes and group ids to extracts Qids and Pids from URLs
 import re
-q_re = re.compile(r'(<?https?://www.wikidata.org/(entity|wiki)/)?(Q[0-9]+)>?')
+q_re = re.compile(r'(<?https?://' + os.environ.get('WIKI_PREFIX') + '.'+ os.environ.get('WIKI_SUFFIX') + '/(entity|wiki)/)?(Q[0-9]+)>?')
 q_re_group_id = 3
-p_re = re.compile(r'(<?https?://www.wikidata.org/(entity/|wiki/Property:))?(P[0-9]+)>?')
+p_re = re.compile(r'(<?https?://' + os.environ.get('WIKI_PREFIX') + '.'+ os.environ.get('WIKI_SUFFIX') + '/(entity/|wiki/Property:))?(P[0-9]+)>?')
 p_re_group_id = 3
 
 # Identifier space and schema space exposed to OpenRefine.
 # This should match the IRI prefixes used in RDF serialization.
 # Note that you should be careful about using http or https there,
 # because any variation will break comparisons at various places.
-identifier_space = 'http://www.wikidata.org/entity/'
-schema_space = 'http://www.wikidata.org/prop/direct/'
+identifier_space = 'http://' + os.environ.get('WIKI_PREFIX') + '.'+ os.environ.get('WIKI_SUFFIX') + '/entity/'
+schema_space = 'http://' + os.environ.get('WIKI_PREFIX') + '.'+ os.environ.get('WIKI_SUFFIX') + '/prop/direct/'
 
 # Pattern used to form the URL of a Qid.
 # This is only used for viewing so it is fine to use any protocol (therefore, preferably HTTPS if supported)
-qid_url_pattern = 'https://www.wikidata.org/wiki/{{id}}'
+qid_url_pattern = 'https://' + os.environ.get('WIKI_PREFIX') + '.'+ os.environ.get('WIKI_SUFFIX') + '/{{id}}'
 
 # By default, filter out any items which are instance
 # of a subclass of this class.
@@ -59,7 +62,7 @@ avoid_items_of_class = 'Q17442446'
 service_name = 'DEV Wikidata'
 
 # URL (without the trailing slash) where this server runs
-this_host = 'http://localhost:8000'
+this_host = 'http://' + os.environ.get('WIKI_SUFFIX') + ':8000'
 
 # The default limit on the number of results returned by us
 default_num_results = 25
@@ -74,7 +77,7 @@ validation_threshold = 95
 redis_uri = 'redis://localhost:6379/0?encoding=utf-8'
 
 # Redis prefix to use in front of all keys
-redis_key_prefix = 'openrefine_wikidata:'
+redis_key_prefix = 'orwd_' + os.environ.get('WIKI_PREFIX')
 
 # Headers for the HTTP requests made by the tool
 headers = {
@@ -124,7 +127,7 @@ fallback_image_alt = 'Wikidata'
 # Autodescribe endpoint to use.
 # this is used to generate automatic descriptions from item contents.
 # (disable this with: autodescribe_endpoint = None )
-autodescribe_endpoint = 'https://autodesc.toolforge.org/'
+autodescribe_endpoint = None
 
 # Property proposal settings
 
