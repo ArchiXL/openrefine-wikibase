@@ -1,11 +1,12 @@
-import os
-
 """
 This file defines a few constants which configure
 which Wikibase instance and which property/item ids
 should be used
 """
 
+import os
+# Set base URI based on environment variables
+# For example: WIKI_PREFIX=sandbox-data WIKI_SUFFIX=test.wikixl.nl
 mediawiki_base_uri = 'https://' + os.environ.get('WIKI_PREFIX') + '.' + os.environ.get('WIKI_SUFFIX')
 
 # Endpoint of the MediaWiki API of the Wikibase instance
