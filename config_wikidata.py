@@ -96,25 +96,7 @@ preview_width = 400
 thumbnail_width = 130
 
 # All properties to use to get an image. Set to empty list [] if no image properties are available.
-image_properties = [
-    'P18',
-    'P14',
-    'P15',
-    'P158',
-    'P181',
-    'P242',
-    'P1766',
-    'P1801',
-    'P1846',
-    'P2713',
-    'P2716',
-    'P2910',
-    'P3311',
-    'P3383',
-    'P3451',
-    'P1621',
-    'P154',
-]
+image_properties = []
 
 # URL pattern to retrieve an image from its filename
 image_download_pattern = 'https://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%dpx-%s'
@@ -134,14 +116,14 @@ autodescribe_endpoint = None
 
 # Default type : entity (Q35120)
 # Set to None if so such item exists.
-default_type_entity = 'Q35120'
+default_type_entity = 'Q1'
 
 # Property path used to obtain the type of an item
-type_property_path = 'P31'
+type_property_path = 'P1'
 
 # Property to follow to fetch properties for a given type.
 # Set to None if this is not available
-property_for_this_type_property = 'P1963'
+property_for_this_type_property = 'P3'
 
 # Optional prefix in front of properties in SPARQL-like property paths
 wdt_prefix = 'wdt:'
@@ -149,12 +131,12 @@ wdt_prefix = 'wdt:'
 # Sparql query used to fetch all the subclasses of a given item.
 # The '$qid' string will be replaced by the qid whose children should be fetched.
 sparql_query_to_fetch_subclasses = """
-SELECT ?child WHERE { ?child wdt:P279* wd:$qid }
+SELECT ?child WHERE { ?child wdt:P2* wd:$qid }
 """
 
 # Sparql query used to fetch all the properties which store unique identifiers
 sparql_query_to_fetch_unique_id_properties = """
-SELECT ?pid WHERE { ?pid wdt:P31/wdt:P279* wd:Q19847637 }
+SELECT ?pid WHERE { ?pid wdt:P1/wdt:P2* wd:Q19847637 }
 """
 
 # Sparql query used to propose properties to fetch for items of a given class.
@@ -168,7 +150,7 @@ SERVICE gas:service {
     gas:program gas:out1 ?depth .
     gas:program gas:maxIterations 10 .
     gas:program gas:maxVisited 100 .
-    gas:program gas:linkType wdt:P279 .
+    gas:program gas:linkType wdt:P2 .
 }
 SERVICE wikibase:label { bd:serviceParam wikibase:language "$lang" }
 ?out wdt:$property_for_this_type ?prop .
