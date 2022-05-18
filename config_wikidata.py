@@ -12,7 +12,7 @@ mediawiki_base_uri = 'https://' + os.environ.get('WIKI_PREFIX') + '.' + os.envir
 mediawiki_api_endpoint = mediawiki_base_uri + '/api.php';
 
 # SPARQL endpoint
-wikibase_sparql_endpoint = 'https://query.wikidata.org/sparql'
+wikibase_sparql_endpoint = 'https://'+ os.environ.get('WIKI_PREFIX') +'.sparql.' + os.environ.get('WIKI_SUFFIX')
 
 # Name of the Wikibase instance
 wikibase_name = os.environ.get('WIKI_PREFIX')
