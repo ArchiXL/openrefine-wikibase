@@ -5,17 +5,22 @@ which Wikibase instance and which property/item ids
 should be used
 """
 
+import os
+# Set base URI based on environment variables
+# For example: WIKI_PREFIX=sandbox-data WIKI_SUFFIX=test.wikixl.nl
+mediawiki_base_uri = 'https://' + os.environ.get('WIKI_PREFIX') + '.' + os.environ.get('WIKI_SUFFIX')
+
 # Endpoint of the MediaWiki API of the Wikibase instance
-mediawiki_api_endpoint = 'https://www.wikidata.org/w/api.php'
+mediawiki_api_endpoint = mediawiki_base_uri + '/api.php';
 
 # SPARQL endpoint
-wikibase_sparql_endpoint = 'https://query.wikidata.org/sparql'
+wikibase_sparql_endpoint = 'https://'+ os.environ.get('WIKI_PREFIX') +'.sparql.' + os.environ.get('WIKI_SUFFIX')
 
 # Name of the Wikibase instance
-wikibase_name = 'Wikidata'
+wikibase_name = os.environ.get('WIKI_PREFIX')
 
 # URL of the main page of the Wikibase instance
-wikibase_main_page = 'https://www.wikidata.org/wiki/Wikidata:Main_Page'
+wikibase_main_page = mediawiki_base_uri + '/Hoofdpagina'
 
 # Wikibase namespace ID, used to search for items
 # For Wikidata this is 0, but most by default Wikibase uses 120, which is the default Wikibase 'Item:' namespace
@@ -30,21 +35,21 @@ user_agent = 'OpenRefine-Wikidata reconciliation interface'
 
 # Regexes and group ids to extracts Qids and Pids from URLs
 import re
-q_re = re.compile(r'(<?https?://www.wikidata.org/(entity|wiki)/)?(Q[0-9]+)>?')
+q_re = re.compile(r'(<?https?://' + os.environ.get('WIKI_PREFIX') + '.'+ os.environ.get('WIKI_SUFFIX') + '/(entity|wiki)/)?(Q[0-9]+)>?')
 q_re_group_id = 3
-p_re = re.compile(r'(<?https?://www.wikidata.org/(entity/|wiki/Property:))?(P[0-9]+)>?')
+p_re = re.compile(r'(<?https?://' + os.environ.get('WIKI_PREFIX') + '.'+ os.environ.get('WIKI_SUFFIX') + '/(entity/|wiki/Property:))?(P[0-9]+)>?')
 p_re_group_id = 3
 
 # Identifier space and schema space exposed to OpenRefine.
 # This should match the IRI prefixes used in RDF serialization.
 # Note that you should be careful about using http or https there,
 # because any variation will break comparisons at various places.
-identifier_space = 'http://www.wikidata.org/entity/'
-schema_space = 'http://www.wikidata.org/prop/direct/'
+identifier_space = 'http://' + os.environ.get('WIKI_PREFIX') + '.'+ os.environ.get('WIKI_SUFFIX') + '/entity/'
+schema_space = 'http://' + os.environ.get('WIKI_PREFIX') + '.'+ os.environ.get('WIKI_SUFFIX') + '/prop/direct/'
 
 # Pattern used to form the URL of a Qid.
 # This is only used for viewing so it is fine to use any protocol (therefore, preferably HTTPS if supported)
-qid_url_pattern = 'https://www.wikidata.org/wiki/{{id}}'
+qid_url_pattern = 'https://' + os.environ.get('WIKI_PREFIX') + '.'+ os.environ.get('WIKI_SUFFIX') + '/{{id}}'
 
 # By default, filter out any items which are instance
 # of a subclass of this class.
@@ -59,7 +64,7 @@ avoid_items_of_class = 'Q17442446'
 service_name = 'DEV Wikidata'
 
 # URL (without the trailing slash) where this server runs
-this_host = 'http://localhost:8000'
+this_host = 'https://' + os.environ.get('WIKI_PREFIX') + '.recon.' + os.environ.get('WIKI_SUFFIX') + ':8000'
 
 # The default limit on the number of results returned by us
 default_num_results = 25
@@ -74,7 +79,7 @@ validation_threshold = 95
 redis_uri = 'redis://redis:6379/0?encoding=utf-8'
 
 # Redis prefix to use in front of all keys
-redis_key_prefix = 'openrefine_wikidata:'
+redis_key_prefix = 'orwd_' + os.environ.get('WIKI_PREFIX')
 
 # Headers for the HTTP requests made by the tool
 headers = {
@@ -130,14 +135,14 @@ autodescribe_endpoint = 'https://tools.wmflabs.org/autodesc/'
 
 # Default type : entity (Q35120)
 # Set to None if so such item exists.
-default_type_entity = 'Q35120'
+default_type_entity = 'Q1'
 
 # Property path used to obtain the type of an item
-type_property_path = 'P31'
+type_property_path = 'P1'
 
 # Property to follow to fetch properties for a given type.
 # Set to None if this is not available
-property_for_this_type_property = 'P1963'
+property_for_this_type_property = 'P3'
 
 # Optional prefix in front of properties in SPARQL-like property paths
 wdt_prefix = 'wdt:'
@@ -145,12 +150,12 @@ wdt_prefix = 'wdt:'
 # Sparql query used to fetch all the subclasses of a given item.
 # The '$qid' string will be replaced by the qid whose children should be fetched.
 sparql_query_to_fetch_subclasses = """
-SELECT ?child WHERE { ?child wdt:P279* wd:$qid }
+SELECT ?child WHERE { ?child wdt:P2* wd:$qid }
 """
 
 # Sparql query used to fetch all the properties which store unique identifiers
 sparql_query_to_fetch_unique_id_properties = """
-SELECT ?pid WHERE { ?pid wikibase:propertyType wikibase:ExternalId }
+SELECT ?pid WHERE { ?pid wdt:P1/wdt:P2* wd:Q19847637 }
 """
 
 # Sparql query used to propose properties to fetch for items of a given class.
@@ -164,7 +169,7 @@ SERVICE gas:service {
     gas:program gas:out1 ?depth .
     gas:program gas:maxIterations 10 .
     gas:program gas:maxVisited 100 .
-    gas:program gas:linkType wdt:P279 .
+    gas:program gas:linkType wdt:P2 .
 }
 SERVICE wikibase:label { bd:serviceParam wikibase:language "$lang" }
 ?out wdt:$property_for_this_type ?prop .
