@@ -61,7 +61,7 @@ avoid_items_of_class = 'Q17442446'
 
 # Service name exposed at various places,
 # mainly in the list of reconciliation services of users
-service_name = 'DEV Wikidata'
+service_name = os.environ.get('WIKI_PREFIX') + '('+ os.environ.get('WIKI_SUFFIX') +')'
 
 # URL (without the trailing slash) where this server runs
 this_host = 'https://' + os.environ.get('WIKI_PREFIX') + '.recon.' + os.environ.get('WIKI_SUFFIX') + ':8000'
